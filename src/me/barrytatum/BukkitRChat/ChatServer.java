@@ -16,7 +16,6 @@ public class ChatServer {
 		} catch (IOException e) {
 
 		}
-		
 	}
 	
 	private void start() throws IOException {
