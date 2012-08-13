@@ -24,9 +24,9 @@ public class InputDataStream implements Runnable {
 	}
 
 	public void run() {
-		
+
 		for (;;) {
-			
+
 			String message;
 
 			try {
@@ -35,6 +35,12 @@ public class InputDataStream implements Runnable {
 				}
 			} catch (IOException e) {
 				BukkitRChat.logger.warning("Unable to read stream.");
+				try {
+					connection.close();
+					break;
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
