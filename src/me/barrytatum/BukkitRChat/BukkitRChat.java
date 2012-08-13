@@ -25,7 +25,7 @@ public class BukkitRChat extends JavaPlugin {
 
 		this.getServer().getPluginManager().registerEvents(this.ch, this);
 		
-		chatServer = new ChatServer(this.port);
+		this.chatServer = new ChatServer(this.port);
 		Thread chatServerThread = new Thread(chatServer);
 		chatServerThread.start();
 	}

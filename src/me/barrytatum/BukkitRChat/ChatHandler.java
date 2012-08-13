@@ -24,7 +24,11 @@ public class ChatHandler implements Listener {
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
+<<<<<<< HEAD
 		this.plugin.getChatServer().sendChat(event.getPlayer().getDisplayName(),
+=======
+		this.plugin.chatServer.sendChat(event.getPlayer().getDisplayName(),
+>>>>>>> Revert "Bug Attempt"
 				event.getMessage());
 	}
 }
