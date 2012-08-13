@@ -22,7 +22,7 @@ public class DataStream implements Runnable {
 
 		// Get the output stream of the client.
 		try {
-			this.out = new PrintWriter(this.connection.getOutputStream());
+			this.out = new PrintWriter(this.connection.getOutputStream(), true);
 
 		} catch (IOException e) {
 			BukkitRChat.logger.warning("Unable to open stream.");
@@ -37,11 +37,15 @@ public class DataStream implements Runnable {
 	public void run() {
 
 		for (;;) {
+
+			// Check that the client is still connected. 
+			if ( this.connection.isClosed() ) break;
+			
+			// Check for messages.
 			if (this.message != null) {
 				this.out.println(this.message);
 				this.message = null;
 			}
 		}
 	}
-
 }

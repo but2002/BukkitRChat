@@ -20,7 +20,6 @@ public class ChatServer {
 	 */
 
 	ChatServer(int port) {
-		
 		try {
 			this.server = new ServerSocket(port);
 			this.start();
@@ -36,7 +35,6 @@ public class ChatServer {
 	 */
 
 	private void start() {
-		
 		while (true) {
 			Socket connection = null;
 
