@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class ChatServer {
+public class ChatServer implements Runnable {
 
 	public ServerSocket server;
 	public int port;
@@ -22,7 +22,6 @@ public class ChatServer {
 	ChatServer(int port) {
 		try {
 			this.server = new ServerSocket(port);
-			//this.start();
 			
 		} catch (IOException e) {
 			BukkitRChat.logger.warning(String.format(
@@ -34,7 +33,8 @@ public class ChatServer {
 	 * Accept connections to the server.
 	 */
 
-	private void start() {
+	public void run() {
+
 		while (true) {
 			Socket connection = null;
 
@@ -56,6 +56,7 @@ public class ChatServer {
 			// Start the client's thread, allowing them to listen and speak.
 			new Thread(client).start();
 		}
+		
 	}
 
 	/**
