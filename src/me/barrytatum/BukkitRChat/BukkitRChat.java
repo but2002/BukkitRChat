@@ -24,5 +24,7 @@ public class BukkitRChat extends JavaPlugin {
 
 		this.getServer().getPluginManager().registerEvents(this.ch, this);
 		logger.info("Hello from BukkitRChat");
+		ChatServer chatServer = new ChatServer(this.port);
+		chatServer.sendChat("SERVER", "Server Started");
 	}
 }
