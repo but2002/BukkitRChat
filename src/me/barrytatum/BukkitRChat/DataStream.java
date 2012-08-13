@@ -1,46 +1,47 @@
 package me.barrytatum.BukkitRChat;
 
 import java.net.Socket;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 public class DataStream implements Runnable {
 
-	public Socket connection;
-	public PrintWriter out;
-	public BufferedReader in;
+	private Socket connection;
+	private PrintWriter out;
+	
+	public String message;
 
+	/**
+	 * Create a data stream to a client that allows data to be sent.
+	 * 
+	 * @param connection - An established socket connection.
+	 */
+	
 	DataStream(Socket connection) {
 		this.connection = connection;
+
+		// Get the output stream of the client.
 		try {
-			this.out = new PrintWriter(connection.getOutputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+			this.out = new PrintWriter(this.connection.getOutputStream());
 
-	public void run() {
-		try {
-			this.in = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-			this.out = new PrintWriter(connection.getOutputStream());
-
-			while (true) {
-				String message;
-
-				while ((message = this.in.readLine()) != null) {
-					this.out.println(message);
-				}
-			}
 		} catch (IOException e) {
 			BukkitRChat.logger.warning("Unable to open stream.");
 			return;
 		}
 	}
+
+	/**
+	 * Send messages to a client.
+	 */
 	
-	public void sendMessge(String name, String message) {
-		out.println(String.format("%s: %s\n", name, message));
+	public void run() {
+
+		for (;;) {
+			if (this.message != null) {
+				this.out.println(this.message);
+				this.message = null;
+			}
+		}
 	}
+
 }
