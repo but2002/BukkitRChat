@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class BukkitRChat extends JavaPlugin {
 
 	public static Logger logger = Logger.getLogger("Minecraft");
-	public static ChatServer chatServer;
+	public ChatServer chatServer;
 	int port;
 	public final ChatHandler ch = new ChatHandler(this);
 
@@ -28,5 +28,9 @@ public class BukkitRChat extends JavaPlugin {
 		chatServer = new ChatServer(this.port);
 		Thread chatServerThread = new Thread(chatServer);
 		chatServerThread.start();
+	}
+	
+	public ChatServer getChatServer() {
+		return this.chatServer;
 	}
 }

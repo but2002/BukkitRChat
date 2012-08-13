@@ -24,7 +24,7 @@ public class ChatHandler implements Listener {
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		BukkitRChat.chatServer.sendChat(event.getPlayer().getDisplayName(),
+		this.plugin.getChatServer().sendChat(event.getPlayer().getDisplayName(),
 				event.getMessage());
 	}
 }
