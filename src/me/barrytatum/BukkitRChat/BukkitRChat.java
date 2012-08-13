@@ -7,14 +7,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class BukkitRChat extends JavaPlugin {
 
-	Logger logger = Logger.getLogger("Minecraft");
+	public static Logger logger = Logger.getLogger("Minecraft");
 	int port;
 	public final ChatHandler ch = new ChatHandler(this);
 
 	public void onEnable() {
 		File file = new File(getDataFolder() + File.separator + "config.yml");
 		if (!file.exists()) {
-			this.logger.info("Generating config.yml");
+			logger.info("Generating config.yml");
 
 			this.getConfig().addDefault("port", 5956);
 			this.getConfig().options().copyDefaults(true);

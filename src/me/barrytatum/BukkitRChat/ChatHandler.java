@@ -22,7 +22,7 @@ public class ChatHandler implements Listener {
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		plugin.logger.info(event.getPlayer().getDisplayName() + ": "
+		BukkitRChat.logger.info(event.getPlayer().getDisplayName() + ": "
 				+ event.getMessage());
 
 	}
