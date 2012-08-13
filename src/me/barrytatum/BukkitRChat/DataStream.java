@@ -12,9 +12,13 @@ public class DataStream implements Runnable {
 	public PrintWriter out;
 	public BufferedReader in;
 
-	DataStream(Socket connection) throws IOException {
+	DataStream(Socket connection) {
 		this.connection = connection;
-		this.out = new PrintWriter(connection.getOutputStream());
+		try {
+			this.out = new PrintWriter(connection.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void run() {
@@ -34,5 +38,9 @@ public class DataStream implements Runnable {
 			BukkitRChat.logger.warning("Unable to open stream.");
 			return;
 		}
+	}
+	
+	public void sendMessge(String name, String message) {
+		out.println(String.format("%s: %s\n", name, message));
 	}
 }
