@@ -27,6 +27,8 @@ public class ChatServer implements Runnable {
 			BukkitRChat.logger.warning(String.format(
 					"Unable to bind on port %d.", port));
 		}
+		
+		this.connectedClients = new ArrayList<DataStream>();
 	}
 
 	/**
@@ -34,10 +36,12 @@ public class ChatServer implements Runnable {
 	 */
 
 	public void run() {
-
+		
+		
+		
 		while (true) {
 			Socket connection = null;
-
+			
 			try {
 				connection = server.accept();
 				
@@ -50,7 +54,6 @@ public class ChatServer implements Runnable {
 			DataStream client = new DataStream(connection);
 
 			// Add the client to the pool of clients.
-			this.connectedClients = new ArrayList<DataStream>();
 			this.connectedClients.add(client);
 
 			// Start the client's thread, allowing them to listen and speak.
