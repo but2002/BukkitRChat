@@ -68,7 +68,7 @@ public class ChatServer implements Runnable {
 
 	public void sendChat(String name, String message) {
 		
-		if ( this.connectedClients.size() == 0 ) return;
+		if ( this.connectedClients != null ) return;
 		
 		Iterator<DataStream> it = this.connectedClients.iterator();
 		String composite = String.format("%s: %s", name, message);
