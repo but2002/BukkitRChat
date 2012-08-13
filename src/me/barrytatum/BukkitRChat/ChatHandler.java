@@ -13,8 +13,10 @@ public class ChatHandler implements Listener {
 	}
 
 	/**
-	 * @param name - Nickname of messenger
-	 * @param message - Their chat message
+	 * @param name
+	 *            Nickname of messenger
+	 * @param message
+	 *            Their chat message
 	 */
 	public static void sendChat(String name, String message) {
 		Bukkit.getServer().broadcastMessage(name + ": " + message);
@@ -22,6 +24,7 @@ public class ChatHandler implements Listener {
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		this.plugin.chatServer.sendChat(event.getPlayer().getDisplayName(), event.getMessage());
+		this.plugin.chatServer.sendChat(event.getPlayer().getDisplayName(),
+				event.getMessage());
 	}
 }
