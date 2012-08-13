@@ -6,12 +6,15 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import java.io.BufferedReader;
+
 public class ChatServer implements Runnable {
 
 	public ServerSocket server;
 	public int port;
 	public ArrayList<DataStream> connectedClients;
-
+	public BufferedReader in;
+	
 	/**
 	 * Constructor to create an instance of a chat server, allowing clients to
 	 * connect.
@@ -20,6 +23,8 @@ public class ChatServer implements Runnable {
 	 */
 
 	ChatServer(int port) {
+		
+		// Bind the chat server to the specified port.
 		try {
 			this.server = new ServerSocket(port);
 			
@@ -28,6 +33,7 @@ public class ChatServer implements Runnable {
 					"Unable to bind on port %d.", port));
 		}
 		
+		// Initialize pool of connected clients.
 		this.connectedClients = new ArrayList<DataStream>();
 	}
 
@@ -37,12 +43,11 @@ public class ChatServer implements Runnable {
 
 	public void run() {
 		
-		
-		
 		while (true) {
 			Socket connection = null;
 			
 			try {
+				// Wait until a connection is requested.
 				connection = server.accept();
 				
 			} catch (IOException e) {
@@ -51,15 +56,16 @@ public class ChatServer implements Runnable {
 			}
 
 			// Create a client instance.
-			DataStream client = new DataStream(connection);
+			DataStream outboundDataStream = new DataStream(connection);
+			InputDataStream incomingDataStream = new InputDataStream(connection);
 
 			// Add the client to the pool of clients.
-			this.connectedClients.add(client);
+			this.connectedClients.add(outboundDataStream);
 
 			// Start the client's thread, allowing them to listen and speak.
-			new Thread(client).start();
+			new Thread(outboundDataStream).start();
+			new Thread(incomingDataStream).start();
 		}
-		
 	}
 
 	/**
@@ -80,5 +86,15 @@ public class ChatServer implements Runnable {
 			DataStream client = it.next();
 			client.message = composite;
 		}
+	}
+	
+	public static void recvChat(String input) {
+		String name, message;
+		String[] intermediate = input.split(",");
+		
+		name = intermediate[0];
+		message = intermediate[1];
+		
+		ChatHandler.sendChat(name, message);
 	}
 }
