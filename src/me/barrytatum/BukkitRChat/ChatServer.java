@@ -94,10 +94,10 @@ public class ChatServer implements Runnable {
 
 	public static void recvChat(String input) {
 		String name, message;
-		String[] intermediate = input.split(";;;;");
+		String[] intermediate = input.split(",");
 
-		name = intermediate[0];
-		message = intermediate[1];
+		name = Base64Coder.decodeString(intermediate[0]);
+		message = Base64Coder.decodeString(intermediate[1]);
 
 		ChatHandler.sendChat(name, message);
 	}
