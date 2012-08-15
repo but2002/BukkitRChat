@@ -5,8 +5,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import java.io.BufferedReader;
+
+import biz.source_code.base64Coder.Base64Coder;
 
 public class ChatServer implements Runnable {
 
@@ -71,6 +72,9 @@ public class ChatServer implements Runnable {
 
 			// Add the client to the pool of clients.
 			this.connectedClients.add(client);
+			
+			Thread clientThread = new Thread(client);
+			clientThread.start();
 		}
 	}
 
@@ -85,15 +89,18 @@ public class ChatServer implements Runnable {
 
 	public void sendChat(String name, String message) {
 
-		if (this.connectedClients.size() == 0)
+		if (this.connectedClients.size() == 0) {
 			return;
+		}
 
 		Iterator<ChatClient> it = this.connectedClients.iterator();
-		String composite = String.format("%s: %s", name, message);
-
+		
+		String encodedName = Base64Coder.encodeString(name);
+		String encodedMessage = Base64Coder.encodeString(message);
+		
 		while (it.hasNext()) {
 			ChatClient client = it.next();
-			client.sendMessage(composite);
+			client.sendMessage(String.format("%s,%s", encodedName, encodedMessage));
 		}
 	}
 }

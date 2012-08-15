@@ -14,16 +14,33 @@ public class ChatClient implements Runnable {
 	PrintWriter out;
 	BufferedReader in;
 
+	/**
+	 * Constructor that allows use of a socket's input and output streams.
+	 * 
+	 * @param connection
+	 * @throws IOException
+	 */
+
 	ChatClient(Socket connection) throws IOException {
 		this.connection = connection;
-		this.out = new PrintWriter(connection.getOutputStream());
+		this.out = new PrintWriter(connection.getOutputStream(), true);
 		this.in = new BufferedReader(new InputStreamReader(
 				connection.getInputStream()));
 	}
+	
+	/**
+	 * Sends a message to the currently connected client.
+	 * 
+	 * @param message
+	 */
 
 	public void sendMessage(String message) {
 		this.out.println(message);
 	}
+	
+	/**
+	 * Listen for messages on this socket.
+	 */
 
 	public void run() {
 
@@ -33,22 +50,21 @@ public class ChatClient implements Runnable {
 
 			try {
 				if ((encodedString = this.in.readLine()) != null) {
-					String name, message;
-					String[] container;
 
-					container = Base64Coder.decodeString(encodedString).split(",");
-					name = container[0];
-					message = container[1];
+					String name, message;
+
+					String[] container = encodedString.split(",");
+
+					name = Base64Coder.decodeString(container[0]);
+					message = Base64Coder.decodeString(container[1]);
 
 					ChatHandler.sendChat(name, message);
 				}
-				
+
 			} catch (IOException e) {
 				return;
 			}
 
 		}
-
 	}
-
 }
