@@ -12,7 +12,7 @@ public class ChatServer implements Runnable {
 
 	public ServerSocket server;
 	public int port;
-	public ArrayList<DataStream> connectedClients;
+	public ArrayList<ChatClient> connectedClients;
 	public BufferedReader in;
 
 	/**
@@ -35,7 +35,7 @@ public class ChatServer implements Runnable {
 		}
 
 		// Initialize pool of connected clients.
-		this.connectedClients = new ArrayList<DataStream>();
+		this.connectedClients = new ArrayList<ChatClient>();
 	}
 
 	/**
@@ -47,8 +47,9 @@ public class ChatServer implements Runnable {
 		while (true) {
 			Socket connection = null;
 
+			// Wait until a connection is requested.
+
 			try {
-				// Wait until a connection is requested.
 				connection = server.accept();
 
 			} catch (IOException e) {
@@ -57,15 +58,19 @@ public class ChatServer implements Runnable {
 			}
 
 			// Create a client instance.
-			DataStream outboundDataStream = new DataStream(connection);
-			InputDataStream incomingDataStream = new InputDataStream(connection);
+
+			ChatClient client;
+			
+			try {
+				client = new ChatClient(connection);
+			
+			} catch (IOException e) {
+				BukkitRChat.logger.warning("Unable to open stream to client.");
+				return;
+			}
 
 			// Add the client to the pool of clients.
-			this.connectedClients.add(outboundDataStream);
-
-			// Start the client's thread, allowing them to listen and speak.
-			new Thread(outboundDataStream).start();
-			new Thread(incomingDataStream).start();
+			this.connectedClients.add(client);
 		}
 	}
 
@@ -83,22 +88,12 @@ public class ChatServer implements Runnable {
 		if (this.connectedClients.size() == 0)
 			return;
 
-		Iterator<DataStream> it = this.connectedClients.iterator();
+		Iterator<ChatClient> it = this.connectedClients.iterator();
 		String composite = String.format("%s: %s", name, message);
 
 		while (it.hasNext()) {
-			DataStream client = it.next();
-			client.message = composite;
+			ChatClient client = it.next();
+			client.sendMessage(composite);
 		}
-	}
-
-	public static void recvChat(String input) {
-		String name, message;
-		String[] intermediate = input.split(",");
-
-		name = Base64Coder.decodeString(intermediate[0]);
-		message = Base64Coder.decodeString(intermediate[1]);
-
-		ChatHandler.sendChat(name, message);
 	}
 }
