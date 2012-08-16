@@ -21,7 +21,6 @@ public class ChatServer implements Runnable {
 	 * connect.
 	 * 
 	 * @param port
-	 *            - The port to bind.
 	 */
 
 	ChatServer(int port) {
@@ -61,10 +60,10 @@ public class ChatServer implements Runnable {
 			// Create a client instance.
 
 			ChatClient client;
-			
+
 			try {
-				client = new ChatClient(connection);
-			
+				client = new ChatClient(this, connection);
+
 			} catch (IOException e) {
 				BukkitRChat.logger.warning("Unable to open stream to client.");
 				return;
@@ -72,7 +71,7 @@ public class ChatServer implements Runnable {
 
 			// Add the client to the pool of clients.
 			this.connectedClients.add(client);
-			
+
 			Thread clientThread = new Thread(client);
 			clientThread.start();
 		}
@@ -82,25 +81,51 @@ public class ChatServer implements Runnable {
 	 * Send a message to connected clients.
 	 * 
 	 * @param name
-	 *            - The name of the speaking player.
 	 * @param message
-	 *            - The spoken message.
 	 */
 
 	public void sendChat(String name, String message) {
 
-		if (this.connectedClients.size() == 0) {
+		if (this.connectedClients.size() == 0)
 			return;
-		}
 
 		Iterator<ChatClient> it = this.connectedClients.iterator();
-		
+
 		String encodedName = Base64Coder.encodeString(name);
 		String encodedMessage = Base64Coder.encodeString(message);
-		
+
 		while (it.hasNext()) {
 			ChatClient client = it.next();
-			client.sendMessage(String.format("%s,%s", encodedName, encodedMessage));
+			client.sendMessage(String.format("%s,%s", encodedName,
+					encodedMessage));
+		}
+	}
+
+	/**
+	 * Send a message to all connected clients, except for the specified client
+	 * ID.
+	 * 
+	 * @param name
+	 * @param message
+	 * @param clientId
+	 */
+
+	public void sendChat(String name, String message, int clientId) {
+		if (this.connectedClients.size() == 0)
+			return;
+
+		Iterator<ChatClient> it = this.connectedClients.iterator();
+
+		String encodedName = Base64Coder.encodeString(name);
+		String encodedMessage = Base64Coder.encodeString(message);
+
+		while (it.hasNext()) {
+			ChatClient client = it.next();
+
+			if (client.getClientId() != clientId) {
+				client.sendMessage(String.format("%s,%s", encodedName,
+						encodedMessage));
+			}
 		}
 	}
 }
