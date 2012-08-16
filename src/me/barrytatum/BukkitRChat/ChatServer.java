@@ -1,20 +1,23 @@
 package me.barrytatum.BukkitRChat;
 
+/**
+ * File:		ChatServer.java
+ * Created:		8/12/2012
+ * Modified:	8/15/2012
+ * Author:		Blake Renton
+ */
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.io.BufferedReader;
-
 import biz.source_code.base64Coder.Base64Coder;
 
 public class ChatServer implements Runnable {
 
-	public ServerSocket server;
-	public int port;
-	public ArrayList<ChatClient> connectedClients;
-	public BufferedReader in;
+	private ServerSocket server;
+	protected ArrayList<ChatClient> connectedClients;
 
 	/**
 	 * Constructor to create an instance of a chat server, allowing clients to
@@ -25,29 +28,28 @@ public class ChatServer implements Runnable {
 
 	ChatServer(int port) {
 
-		// Bind the chat server to the specified port.
+		// Bind the server to the specified port.
+
 		try {
 			this.server = new ServerSocket(port);
-
 		} catch (IOException e) {
 			BukkitRChat.logger.warning(String.format(
 					"Unable to bind on port %d.", port));
 		}
 
 		// Initialize pool of connected clients.
+
 		this.connectedClients = new ArrayList<ChatClient>();
 	}
 
 	/**
-	 * Accept connections to the server.
+	 * Listen for connections to the server.
 	 */
 
 	public void run() {
 
 		while (true) {
 			Socket connection = null;
-
-			// Wait until a connection is requested.
 
 			try {
 				connection = server.accept();
@@ -57,9 +59,12 @@ public class ChatServer implements Runnable {
 				return;
 			}
 
-			// Create a client instance.
+			// ///////////////////////////////////////////////////////////////
+			// Create the client instance.
+			// ///////////////////////////////////////////////////////////////
 
 			ChatClient client;
+			Thread clientThread;
 
 			try {
 				client = new ChatClient(this, connection);
@@ -72,10 +77,11 @@ public class ChatServer implements Runnable {
 			// Add the client to the pool of clients.
 			this.connectedClients.add(client);
 
-			Thread clientThread = new Thread(client);
+			clientThread = new Thread(client);
 			clientThread.start();
 		}
-	}
+
+	} // end run()
 
 	/**
 	 * Send a message to connected clients.
@@ -111,6 +117,7 @@ public class ChatServer implements Runnable {
 	 */
 
 	public void sendChat(String name, String message, int clientId) {
+
 		if (this.connectedClients.size() == 0)
 			return;
 
@@ -126,6 +133,9 @@ public class ChatServer implements Runnable {
 				client.sendMessage(String.format("%s,%s", encodedName,
 						encodedMessage));
 			}
-		}
-	}
+
+		} // end while()
+
+	} // end sendChat()
+
 }
